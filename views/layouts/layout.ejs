@@ -9,28 +9,13 @@
 </head>
 
 <body>
-    <header>
-        <h1>ABC Bank</h1>
-        <h2>Customer Management</h2>
-        <nav>
-            <ul>
-                <li><a href="#">Add new customer</a></li>
-                <li><a href="#">Update existing customer</a></li>
-                <li><a href="#">Delete customer</a></li>
-            </ul>
-        </nav>
-    </header>
+    <%- include('../partials/header.ejs') %>
 
-    <main>
-        <%- body %>
-    </main>
+        <main>
+            <%- body %>
+                <%- include('../partials/errorMessage.ejs') %>
 
-    <footer>
-        <br>
-        <br>
-
-        The end.
-    </footer>
+        </main>
 </body>
 
 </html>
