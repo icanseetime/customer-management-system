@@ -1,5 +1,10 @@
 <label for="pno">Personal number</label>
-<input type="text" name="pno" id="pno" value="<%= customer.personal_number %>" />
+<input
+	type="text"
+	name="pno"
+	id="pno"
+	value="<%= customer.personal_number %>"
+/>
 
 <label for="fName">First name</label>
 <input type="text" name="fName" id="fName" value="<%= customer.first_name %>" />
@@ -9,3 +14,11 @@
 
 <label for="city">City</label>
 <input type="text" name="city" id="city" value="<%= customer.city %>" />
+
+<label for="acctType">Account type</label>
+<select name="acctType" id="acctType">
+	<option value="60">Current account</option>
+	<option value="50">Deposit account</option>
+	<option value="40">Savings account</option>
+	<option value="30">Investment account</option>
+</select>

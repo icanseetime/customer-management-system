@@ -74,7 +74,8 @@ form {
 }
 
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+select {
     width: 100%;
 }
 
