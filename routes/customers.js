@@ -59,7 +59,7 @@ router.post('/', async (req, res) => {
     let customerNo = Math.floor(Math.random() * 10000).toString()
     let beforeControlNum = bankReg + typeOfAcct + customerNo
 
-    // Get control number for account with mod11
+    // Get control number for account with mod11 (Norwegian standard)
     function mod11(account) {
         const weights = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
         sum = 0
@@ -79,6 +79,9 @@ router.post('/', async (req, res) => {
     }
     const accountNumber = beforeControlNum + mod11(beforeControlNum).toString()
 
+    // Create ID that correlates with account number (Norwegian standard)
+    const id = Number(accountNumber.substr(4, 7))
+
     // Set birthdate
     const pno = req.body.pno
     const date = pno.toString().substr(0, 6) //140593
@@ -89,6 +92,7 @@ router.post('/', async (req, res) => {
 
     // Create customer object
     const customer = new Customer({
+        customer_id: id,
         personal_number: req.body.pno,
         account_number: accountNumber,
         first_name: req.body.fName,
@@ -105,7 +109,7 @@ router.post('/', async (req, res) => {
         console.log(err)
         res.render('customers/new', {
             customer: customer,
-            errorMessage: 'Something went wrong when trying to create the new customer. Please try again.'
+            errorMessage: 'Something went wrong when trying to create the new customer. Please check the form and try again.'
         })
     }
 })
