@@ -38,7 +38,15 @@ router.get('/find', async (req, res) => {
 // POST
 // New customer
 router.get('/new', (req, res) => {
-    res.render('customers/new', { customer: new Customer() })
+    if (req.query.pno) {
+        res.render('customers/new', {
+            customer: new Customer({
+                personal_number: req.query.pno
+            })
+        })
+    } else {
+        res.render('customers/new', { customer: new Customer() })
+    }
 })
 
 // Create new customer

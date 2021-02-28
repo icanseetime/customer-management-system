@@ -1,17 +1,34 @@
 <h2>Find customer</h2>
+
+<!-- Search for existing customer -->
 <form action="/customers/find" method="GET">
-	<label for="customerCheck">Check if customer exists</label>
+	<label for="customerCheck">Personal number</label>
 	<input
 		type="number"
 		step="any"
-		placeholder="Personal number"
+		placeholder="123456-00000"
 		name="customerCheck"
 		value="<%= searchOptions.customerCheck %>"
 	/>
 	<input type="submit" value="Search" />
 </form>
+
+<!-- Send info to new customer-creation -->
+<% if (typeof errorMessage !== 'undefined') { %>
+<form action="/customers/new" method="GET">
+	<input
+		type="hidden"
+		name="pno"
+		value="<%= searchOptions.customerCheck %>"
+	/>
+	<input type="submit" value="Create new customer" />
+</form>
+<% } %>
+
 <br />
 <!-- TODO: Make this into a neat object that displays the customer details (for one customer, once the database is set up to enforce this) -->
-<% if (customers) { %> <% customers.forEach(customer => { %>
+<% if (customers) { customers.forEach(customer=> { %>
+
 <div><%= customer %></div>
-<% }) %> <% } %>
+
+<% })} %>
