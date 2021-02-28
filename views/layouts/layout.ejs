@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link
+			href="//fonts.googleapis.com/css?family=Raleway:400,300,600"
+			rel="stylesheet"
+			type="text/css"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="/stylesheets/normalize.css"
+		/>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="/stylesheets/skeleton.css"
+		/>
+		<link rel="stylesheet" type="text/css" href="/stylesheets/styles.css" />
+		<title>ABC Bank | Customer Management</title>
+	</head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABC Bank | Customer Management</title>
-</head>
+	<body>
+		<%- include('../partials/header.ejs') %>
 
-<body>
-    <%- include('../partials/header.ejs') %>
-
-        <main>
-            <%- body %>
-                <%- include('../partials/errorMessage.ejs') %>
-
-        </main>
-</body>
-
+		<main><%- body %> <%- include('../partials/errorMessage.ejs') %></main>
+	</body>
 </html>
