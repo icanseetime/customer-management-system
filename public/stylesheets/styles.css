@@ -12,6 +12,15 @@ footer {
     padding: 2em;
 }
 
+#errorMessage {
+    color: rgb(211, 0, 0);
+}
+
+img {
+    margin-top: 3em;
+    max-height: 50vh;
+}
+
 /* Header */
 header {
     width: 100vw;
