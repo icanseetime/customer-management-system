@@ -1,5 +1,5 @@
 <h2>Find customer</h2>
-<form action="/customers" method="GET">
+<form action="/customers/find" method="GET">
 	<label for="customerCheck">Check if customer exists</label>
 	<input
 		type="number"
@@ -12,6 +12,6 @@
 </form>
 <br />
 <!-- TODO: Make this into a neat object that displays the customer details (for one customer, once the database is set up to enforce this) -->
-<% customers.forEach(customer => { %>
+<% if (customers) { %> <% customers.forEach(customer => { %>
 <div><%= customer %></div>
-<% }) %>
+<% }) %> <% } %>

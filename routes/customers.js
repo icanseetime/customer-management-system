@@ -2,8 +2,17 @@ const express = require('express')
 const router = express.Router()
 const Customer = require('../models/customer')
 
-// Checking if customer exists
+// GET
+// Find customer
 router.get('/', async (req, res) => {
+    res.render('customers/index', {
+        searchOptions: '',
+        customers: []
+    })
+})
+
+// Check if customer exists in database
+router.get('/find', async (req, res) => {
     try {
         const customers = await Customer.find({ personal_number: req.query.customerCheck })
         console.log(customers)
@@ -26,6 +35,7 @@ router.get('/', async (req, res) => {
     }
 })
 
+// POST
 // New customer
 router.get('/new', (req, res) => {
     res.render('customers/new', { customer: new Customer() })
