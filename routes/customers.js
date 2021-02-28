@@ -13,6 +13,7 @@ router.get('/', async (req, res) => {
 
 // Check if customer exists in database
 router.get('/find', async (req, res) => {
+    console.log(req, res)
     try {
         const customers = await Customer.find({ personal_number: req.query.customerCheck })
         console.log(customers)
@@ -22,7 +23,6 @@ router.get('/find', async (req, res) => {
                 searchOptions: req.query
             })
         } else {
-            // Fix the code so this doesn't display when rendered the first time
             res.render('customers/index', {
                 errorMessage: 'There is no customer with this personal number.',
                 customers: customers,
