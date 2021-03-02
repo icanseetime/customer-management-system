@@ -9,11 +9,9 @@ const customerSchema = new mongoose.Schema({
         max: 9999999
     },
     personal_number: {
-        type: Number,
+        type: String,
         required: true,
-        unique: true,
-        min: 01010000000,
-        max: 31129999999
+        unique: true
     },
     account_number: {
         type: String,

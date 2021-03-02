@@ -84,10 +84,10 @@ router.post('/', async (req, res) => {
 
     // Set birthdate
     const pno = req.body.pno
-    const date = pno.toString().substr(0, 6) //140593
+    const date = pno.substr(0, 6)
     const day = date.substr(0, 2)
     const month = date.substr(2, 2)
-    const year = date.substr(4, 2) > 21 ? `19${date.substr(4, 2)}` : `20${date.substr(4, 2)}`
+    const year = date.substr(4, 2) > 21 ? `19${date.substr(4, 2)}` : `20${date.substr(4, 2)}` // Not accounting for 100-year olds
     const birthdate = new Date(`${year}-${month}-${day}`)
 
     // Create customer object
@@ -103,6 +103,7 @@ router.post('/', async (req, res) => {
 
     try {
         const newCustomer = await customer.save()
+        console.log(newCustomer)
         // res.redirect(`customers/${newCustomer.id}`)
         res.redirect(`customers`)
     } catch (err) {
