@@ -112,6 +112,7 @@ input[type="reset"],
 
 /* Customer display card */
 .customer-card {
+    box-sizing: border-box;
     background-color: gainsboro;
     width: 100%;
     padding: 2em 3em;
@@ -143,6 +144,11 @@ input[type="reset"],
 .ids {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    margin-bottom: .8em;
+}
+
+.details p {
+    margin-bottom: .5em;
 }
 
 .details p:nth-of-type(even) {
@@ -158,4 +164,5 @@ input[type="reset"],
 
 p.customer-since {
     margin-bottom: 0;
+    margin-top: .8em;
 }
