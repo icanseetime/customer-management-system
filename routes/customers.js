@@ -115,4 +115,21 @@ router.post('/', async (req, res) => {
     }
 })
 
+// UPDATE
+router.get('/update', (req, res) => {
+    res.render('customers/update')
+})
+
+router.put('/update/:pno', (req, res) => {
+})
+
+
+// DELETE
+router.get('/delete', (req, res) => {
+    res.render('customers/delete')
+})
+
+router.put('/delete/:pno', (req, res) => {
+})
+
 module.exports = router
