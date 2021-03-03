@@ -4,8 +4,8 @@ const router = express.Router()
 const Customer = require('../models/customer')
 
 // GET
-// Find customer
-router.get('/', async (req, res) => {
+// Find customer view
+router.get('/', (req, res) => {
     res.render('customers/index', {
         searchOptions: '',
         customers: []
@@ -29,8 +29,7 @@ router.get('/find', async (req, res) => {
                 searchOptions: req.query || ''
             })
         }
-    } catch (err) {
-        console.log(err)
+    } catch {
         res.redirect('/')
     }
 })
@@ -117,19 +116,68 @@ router.post('/', async (req, res) => {
 
 // UPDATE
 router.get('/update', (req, res) => {
-    res.render('customers/update')
+    if (req.query.pno) {
+        res.render('customers/update', {
+            customer: new Customer({
+                personal_number: req.query.pno
+            })
+        })
+    } else {
+        res.render('customers/update', { customer: new Customer() })
+    }
 })
 
-router.put('/update/:pno', (req, res) => {
+router.put('/:pno', (req, res) => {
+    res.send('Update customer with personal number ' + req.params.pno)
 })
 
 
 // DELETE
+// Delete customer-page
 router.get('/delete', (req, res) => {
-    res.render('customers/delete')
+    if (req.query.pno) {
+        res.render('customers/delete', {
+            customer: new Customer({
+                personal_number: req.query.pno
+            }),
+            searchOptions: '',
+            customers: []
+        })
+    } else {
+        res.render('customers/delete', {
+            customer: new Customer(),
+            searchOptions: '',
+            customers: []
+        })
+    }
 })
 
-router.put('/delete/:pno', (req, res) => {
+// Get customers
+router.post('/delete', async (req, res) => {
+    try {
+        const customers = await Customer.find({ personal_number: req.body.customerCheck })
+        if (customers.length) {
+            res.render('customers/delete', {
+                customer: new Customer(),
+                customers: customers,
+                searchOptions: req.query
+            })
+        } else {
+            res.render('customers/delete', {
+                errorMessage: 'There is no customer with this personal number, please try again.',
+                customer: new Customer(),
+                customers: customers,
+                searchOptions: req.query || ''
+            })
+        }
+    } catch {
+        res.redirect('/customers/delete')
+    }
+})
+
+// Delete customer by ID
+router.delete('/:pno', (req, res) => {
+    res.send('Delete customer with personal number ' + req.params.pno)
 })
 
 module.exports = router

@@ -98,7 +98,8 @@ input[type="reset"] {
     border: 1px solid white;
 }
 
-input[type="reset"] {
+input[type="reset"],
+#delete-button {
     background-color: rgb(177, 50, 0);
     color: white;
 }
