@@ -23,9 +23,31 @@
 <% } %>
 
 <br />
-<!-- TODO: Make this into a neat object that displays the customer details (for one customer, once the database is set up to enforce this) -->
 <% if (customers) { customers.forEach(customer=> { %>
 
-<div><%= customer %></div>
+<div class="customer-card">
+	<div class="ids">
+		<p>PNO</p>
+		<p><%= customer.pno %></p>
+		<p>CID</p>
+		<p><%= customer.cid %></p>
+	</div>
+
+	<h3 class="name"><%= customer.fullName %></h3>
+	<div class="details">
+		<p>Account no.</p>
+		<p><%= customer.accNo %></p>
+		<p>Account type</p>
+		<p><%= customer.accountType %></p>
+		<p>City</p>
+		<p><%= customer.city %></p>
+		<p>Date of birth</p>
+		<p><%= customer.birthdate %></p>
+	</div>
+
+	<p class="customer-since">
+		Customer since <span><%= customer.sinceDate %> </span>
+	</p>
+</div>
 
 <% })} %>

@@ -3,6 +3,8 @@ const { createCollection } = require('../models/customer')
 const router = express.Router()
 const Customer = require('../models/customer')
 
+const customerDetails = require('../public/javascripts/customerDetails')
+
 // GET
 // Find customer view
 router.get('/', (req, res) => {
@@ -18,8 +20,9 @@ router.get('/find', async (req, res) => {
         const customers = await Customer.find({ personal_number: req.query.customerCheck })
         console.log(customers)
         if (customers.length) {
+            customersInfo = customers.map(customer => customerDetails(customer))
             res.render('customers/index', {
-                customers: customers,
+                customers: customersInfo,
                 searchOptions: req.query
             })
         } else {
@@ -29,7 +32,8 @@ router.get('/find', async (req, res) => {
                 searchOptions: req.query || ''
             })
         }
-    } catch {
+    } catch (err) {
+        console.log(err)
         res.redirect('/')
     }
 })
@@ -157,9 +161,9 @@ router.post('/delete', async (req, res) => {
     try {
         const customers = await Customer.find({ personal_number: req.body.customerCheck })
         if (customers.length) {
+            customersInfo = customers.map(customer => customerDetails(customer))
             res.render('customers/delete', {
-                customer: new Customer(),
-                customers: customers,
+                customers: customersInfo,
                 searchOptions: req.query
             })
         } else {
