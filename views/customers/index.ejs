@@ -2,14 +2,7 @@
 
 <!-- Search for existing customer -->
 <form action="/customers/find" method="GET">
-	<label for="customerCheck">Personal number</label>
-	<input
-		type="number"
-		step="any"
-		placeholder="123456-00000"
-		name="customerCheck"
-		value="<%= searchOptions.customerCheck %>"
-	/>
+	<%- include('../partials/_search_field.ejs', { customer: '' }) %>
 	<div class="buttons-left">
 		<input class="button-primary" type="submit" value="Search" />
 	</div>

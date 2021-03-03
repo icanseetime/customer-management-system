@@ -1,0 +1,12 @@
+<label for="customerCheck">Personal number</label>
+<input
+	type="number"
+	step="any"
+	placeholder="123456-00000"
+	name="customerCheck"
+	value="<%= customer.personal_number ? customer.personal_number : searchOptions.customerCheck %>"
+	autofocus
+	required
+	minlength="11"
+	maxlength="11"
+/>

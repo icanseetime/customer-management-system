@@ -1,1 +1,20 @@
 <h2>Delete existing customer</h2>
+
+<form action="/customers/delete" method="POST">
+	<%- include('../partials/_search_field.ejs', { customer: '' }) %>
+	<div class="buttons-left">
+		<input class="button-primary" type="submit" value="Find customer" />
+	</div>
+</form>
+
+<% if (customers) { customers.forEach(customer=> { %>
+
+<div><%= customer %></div>
+<form
+	action="/customers/<%= customer.personal_number %>?_method=DELETE"
+	method="POST"
+>
+	<button id="delete-button" type="submit">Delete</button>
+</form>
+
+<% })} %>
