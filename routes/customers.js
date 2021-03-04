@@ -164,6 +164,7 @@ router.post('/delete', async (req, res) => {
             customersInfo = customers.map(customer => customerDetails(customer))
             res.render('customers/delete', {
                 customers: customersInfo,
+                pno: req.body.customerCheck,
                 searchOptions: req.query
             })
         } else {
@@ -180,8 +181,24 @@ router.post('/delete', async (req, res) => {
 })
 
 // Delete customer by ID
-router.delete('/:pno', (req, res) => {
-    res.send('Delete customer with personal number ' + req.params.pno)
+router.delete('/:pno', async (req, res) => {
+    try {
+        let customer = await Customer.remove({ personal_number: req.params.pno })
+        res.render('customers/delete', {
+            searchOptions: '',
+            customers: [],
+            successMessage: `Successfully deleted customer with personal number ${req.params.pno}`
+        })
+    } catch {
+        res.render('customers/delete', {
+            customer: new Customer({
+                personal_number: req.params.pno
+            }),
+            searchOptions: '',
+            customers: [],
+            errorMessage: `Could not delete customer with personal number ${req.params.pno}. Please try again.`
+        })
+    }
 })
 
 module.exports = router

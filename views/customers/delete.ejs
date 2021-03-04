@@ -33,11 +33,10 @@
 		Customer since <span><%= customer.sinceDate %> </span>
 	</p>
 </div>
-<form
-	action="/customers/<%= customer.personal_number %>?_method=DELETE"
-	method="POST"
->
-	<button id="delete-button" type="submit">Delete</button>
+<form action="/customers/<%= pno %>?_method=DELETE" method="POST">
+	<div class="buttons-left">
+		<button id="delete-button" type="submit">Delete</button>
+	</div>
 </form>
 
 <% })} %>
