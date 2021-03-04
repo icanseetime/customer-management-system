@@ -103,7 +103,13 @@ router.post('/', async (req, res) => {
 
     try {
         const newCustomer = await customer.save()
-        res.redirect(`customers`)
+        // res.redirect(`customers`)
+        res.render('customers/index', {
+            customers: [],
+            searchOptions: {
+                customerCheck: req.body.pno
+            }
+        })
     } catch (err) {
         console.log(err)
         res.render('customers/new', {
@@ -126,10 +132,25 @@ router.get('/update', (req, res) => {
     }
 })
 
-router.put('/:pno', (req, res) => {
-    res.send('Update customer with personal number ' + req.params.pno)
+router.put('/:pno', async (req, res) => {
+    try {
+        await Customer.updateOne({ personal_number: req.params.pno })
+        res.render('customers/update', {
+            searchOptions: '',
+            customers: [],
+            successMessage: `Successfully updated customer with personal number ${req.params.pno}.`
+        })
+    } catch {
+        res.render('customers/update', {
+            customer: new Customer({
+                personal_number: req.params.pno
+            }),
+            searchOptions: '',
+            customers: [],
+            errorMessage: `Could not update customer with personal number ${req.params.pno}. Please try again.`
+        })
+    }
 })
-
 
 // DELETE
 // Delete customer-page
