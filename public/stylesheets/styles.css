@@ -6,25 +6,37 @@ body {
     box-sizing: border-box;
 }
 
+body * {
+    box-sizing: border-box;
+}
+
 header,
 main,
 footer {
     padding: 2em;
 }
 
+#feedbackMessages {
+    text-align: center;
+}
+
 #errorMessage {
     color: rgb(211, 0, 0);
-    text-align: center;
+}
+
+#successMessage {
+    color: green;
 }
 
 img {
     margin-top: 3em;
-    max-height: 50vh;
+    max-width: 75%;
+    align-self: center;
 }
 
 /* Header */
 header {
-    width: 100vw;
+    width: 100%;
     background-color: gainsboro;
 }
 
@@ -59,8 +71,7 @@ nav ul {
 main {
     display: flex;
     flex-direction: column;
-    width: 30vw;
-    /* align-items: center; */
+    width: 35vw;
     align-items: auto;
 }
 
@@ -112,7 +123,6 @@ input[type="reset"],
 
 /* Customer display card */
 .customer-card {
-    box-sizing: border-box;
     background-color: gainsboro;
     width: 100%;
     padding: 2em 3em;
@@ -121,6 +131,7 @@ input[type="reset"],
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    margin-bottom: 1em;
 }
 
 .customer-card p {

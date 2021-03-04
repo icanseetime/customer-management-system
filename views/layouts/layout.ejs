@@ -29,11 +29,13 @@
 
 		<main>
 			<%- body %>
-			<p id="errorMessage">
-				<%- include('../partials/errorMessage.ejs') %>
-			</p>
-			<p id="successMessage">
-				<%- include('../partials/successMessage.ejs') %>
+			<p id="feedbackMessages">
+				<span id="errorMessage">
+					<%- include('../partials/errorMessage.ejs') %>
+				</span>
+				<span id="successMessage">
+					<%- include('../partials/successMessage.ejs') %>
+				</span>
 			</p>
 		</main>
 	</body>
