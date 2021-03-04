@@ -18,7 +18,6 @@ router.get('/', (req, res) => {
 router.get('/find', async (req, res) => {
     try {
         const customers = await Customer.find({ personal_number: req.query.customerCheck })
-        console.log(customers)
         if (customers.length) {
             customersInfo = customers.map(customer => customerDetails(customer))
             res.render('customers/index', {
@@ -54,8 +53,6 @@ router.get('/new', (req, res) => {
 
 // Create new customer
 router.post('/', async (req, res) => {
-    console.log(req.body)
-
     // Create random account number
     const bankReg = '1234'
     const typeOfAcct = req.body.acctType
@@ -106,8 +103,6 @@ router.post('/', async (req, res) => {
 
     try {
         const newCustomer = await customer.save()
-        console.log(newCustomer)
-        // res.redirect(`customers/${newCustomer.id}`)
         res.redirect(`customers`)
     } catch (err) {
         console.log(err)
@@ -183,11 +178,11 @@ router.post('/delete', async (req, res) => {
 // Delete customer by ID
 router.delete('/:pno', async (req, res) => {
     try {
-        let customer = await Customer.remove({ personal_number: req.params.pno })
+        await Customer.deleteOne({ personal_number: req.params.pno })
         res.render('customers/delete', {
             searchOptions: '',
             customers: [],
-            successMessage: `Successfully deleted customer with personal number ${req.params.pno}`
+            successMessage: `Successfully deleted customer with personal number ${req.params.pno}.`
         })
     } catch {
         res.render('customers/delete', {
