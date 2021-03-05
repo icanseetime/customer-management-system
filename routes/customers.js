@@ -21,8 +21,9 @@ router.get('/', (req, res) => {
 
 // Check if customer exists in database
 router.get('/find', async (req, res) => {
+    console.log(req.query)
     try {
-        const customers = await Customer.find({ personal_number: req.query.customerCheck })
+        const customers = await Customer.find({ personal_number: new RegExp(req.query.customerCheck) })
         console.log(customers)
         if (customers.length) {
             customersInfo = customers.map(customer => customerDetails(customer))
@@ -40,7 +41,6 @@ router.get('/find', async (req, res) => {
         }
     } catch (err) {
         console.log(err)
-        // res.redirect('/')
         res.render('customers/index', {
             errorMessage: 'Something went wrong while trying to find customers. Please try again.',
             dbError: true,
@@ -79,7 +79,7 @@ router.post('/new', async (req, res) => {
         do {
             accountNumber = generateAccountNumber(req.body.acctType)
             // Check if account number already exists in database
-            accNoCheck = await Customer.find({ account_number: customer.account_number })
+            accNoCheck = await Customer.find({ account_number: accountNumber })
         } while (accNoCheck.length)
 
         // Create ID that correlates with account number (Norwegian standard)
@@ -88,6 +88,7 @@ router.post('/new', async (req, res) => {
 
         // Check to make sure customer ID doesn't exist in the database
         if (idCheck.length) {
+            console.log(1)
             res.render('customers/new', {
                 customer: '',
                 errorMessage: 'Something went wrong when trying to create the new customer.Please try submitting the form again.'
@@ -115,8 +116,8 @@ router.post('/new', async (req, res) => {
                         customerCheck: req.body.pno
                     }
                 })
-            } catch (err) {
-                console.log(err)
+            } catch {
+                console.log(2)
                 res.render('customers/new', {
                     customer: customer,
                     errorMessage: 'Something went wrong when trying to create the new customer. Please check the form and try again.'
