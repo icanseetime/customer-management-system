@@ -24,7 +24,6 @@ function mod11(account, accountType) {
         return '0'
     } else if (ctrlNum == 10) {
         let beforeControlNum = numsBeforeControlNum(accountType)
-        beforeControlNum = bankReg + accountType + customerNo
         return mod11(beforeControlNum)
     } else {
         return ctrlNum

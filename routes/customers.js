@@ -21,10 +21,8 @@ router.get('/', (req, res) => {
 
 // Check if customer exists in database
 router.get('/find', async (req, res) => {
-    console.log(req.query)
     try {
         const customers = await Customer.find({ personal_number: new RegExp(req.query.customerCheck) })
-        console.log(customers)
         if (customers.length) {
             customersInfo = customers.map(customer => customerDetails(customer))
             res.render('customers/index', {
@@ -39,8 +37,7 @@ router.get('/find', async (req, res) => {
                 searchOptions: req.query || ''
             })
         }
-    } catch (err) {
-        console.log(err)
+    } catch {
         res.render('customers/index', {
             errorMessage: 'Something went wrong while trying to find customers. Please try again.',
             dbError: true,
@@ -70,7 +67,13 @@ router.post('/new', async (req, res) => {
     const pnoCheck = await Customer.find({ personal_number: req.body.pno })
     if (pnoCheck.length) {
         res.render('customers/new', {
-            customer: '',
+            customer: new Customer({
+                personal_number: req.body.pno,
+                first_name: req.body.fName,
+                last_name: req.body.lName,
+                city: req.body.city,
+                account_number: req.body.acctType
+            }),
             errorMessage: `There is already a customer with personal number ${req.body.pno} in the database. Please check the personal number and try again.`
         })
     } else {
@@ -88,7 +91,6 @@ router.post('/new', async (req, res) => {
 
         // Check to make sure customer ID doesn't exist in the database
         if (idCheck.length) {
-            console.log(1)
             res.render('customers/new', {
                 customer: '',
                 errorMessage: 'Something went wrong when trying to create the new customer.Please try submitting the form again.'
@@ -117,7 +119,6 @@ router.post('/new', async (req, res) => {
                     }
                 })
             } catch {
-                console.log(2)
                 res.render('customers/new', {
                     customer: customer,
                     errorMessage: 'Something went wrong when trying to create the new customer. Please check the form and try again.'
@@ -164,9 +165,8 @@ router.post('/update', async (req, res) => {
                 update: false
             })
         }
-    } catch (err) {
+    } catch {
         // If something goes wrong when trying to find data
-        console.log(err)
         res.render('customers/update', {
             errorMessage: 'Something went wrong while trying to get customer from database. Please try again.',
             customers: customers,
@@ -183,11 +183,8 @@ router.put('/:pno', async (req, res) => {
 
         // Personal number & date of birth
         if (customer.personal_number !== req.body.pno) {
-            console.log('This works!')
             customer.personal_number = req.body.pno
-            console.log(customer.personal_number)
             customer.date_of_birth = setBirthdate(customer.personal_number)
-            console.log(customer.date_of_birth)
         }
 
         // Names & city
