@@ -109,7 +109,16 @@ input[type="reset"] {
 input[type="reset"],
 #delete-button {
     background-color: rgb(177, 50, 0);
+    border: 1px solid rgb(177, 50, 0);
     color: white;
+}
+
+input[type="reset"]:hover,
+#delete-button:hover {
+    background-color: rgb(145, 41, 0);
+    border: 1px solid rgb(145, 41, 0);
+    color: white;
+
 }
 
 .buttons-left {
@@ -221,6 +230,15 @@ p.customer-since {
 }
 
 @media only screen and (max-width: 480px) {
+
+    /* Forms */
+    .button,
+    button,
+    input[type="submit"],
+    input[type="reset"],
+    input[type="button"] {
+        padding: 0 1em;
+    }
 
     /* Customer display card */
     .name {
