@@ -7,6 +7,8 @@
 	value="<%= customer.personal_number %>"
 	required
 	autofocus
+	pattern="\d{11}"
+	title="Personal number should be 11 digits."
 />
 
 <label for="fName">First name</label>
@@ -16,6 +18,8 @@
 	id="fName"
 	value="<%= customer.first_name %>"
 	required
+	minlength="2"
+	maxlength="40"
 />
 
 <label for="lName">Last name</label>
@@ -25,14 +29,24 @@
 	id="lName"
 	value="<%= customer.last_name %>"
 	required
+	minlength="2"
+	maxlength="40"
 />
 
 <label for="city">City</label>
-<input type="text" name="city" id="city" value="<%= customer.city %>" />
+<input 
+	type="text" 
+	name="city" 
+	id="city" 
+	value="<%= customer.city %>" 
+	required
+	minlength="2"
+	maxlength="30"
+/>
 
 <label for="acctType">Account type</label>
 <select name="acctType" id="acctType" required>
-	<option disabled <%= customer.account_number ? '' : 'selected' %> hidden>Select account type</option>
+	<option disabled <%= customer.account_number ? '' : 'selected' %> hidden value="">--Select account type--</option>
 	<option value="60" <%= customer.account_number ? (customer.account_number.substr(4, 2) == '60' ? 'selected' : '') : '' %> >Current account</option>
 	<option value="50" <%= customer.account_number ? (customer.account_number.substr(4, 2) == '50' ? 'selected' : '') : '' %>>Deposit account</option>
 	<option value="40" <%= customer.account_number ? (customer.account_number.substr(4, 2) == '40' ? 'selected' : '') : '' %>>Savings account</option>

@@ -1,12 +1,11 @@
 <label for="customerCheck">Personal number</label>
 <input
-	type="number"
-	step="any"
+	type="text"
 	placeholder="123456-00000"
 	name="customerCheck"
 	value="<%= customer.personal_number ? customer.personal_number : searchOptions.customerCheck %>"
 	autofocus
 	required
-	minlength="11"
-	maxlength="11"
+	pattern="\d{11}"
+	title="Personal number should be 11 digits."
 />

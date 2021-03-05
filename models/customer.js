@@ -5,7 +5,7 @@ const customerSchema = new mongoose.Schema({
         type: Number,
         required: true,
         unique: true,
-        min: 0000000,
+        min: 3000000,
         max: 9999999
     },
     personal_number: {
@@ -32,7 +32,7 @@ const customerSchema = new mongoose.Schema({
     },
     city: {
         type: String,
-        required: false
+        required: true
     },
     created_date: {
         type: Date,
