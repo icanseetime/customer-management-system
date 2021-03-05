@@ -1,9 +1,14 @@
 const express = require('express')
-const { createCollection } = require('../models/customer')
+const { createCollection } = require('../models/customer') // TODO: check this
 const router = express.Router()
+
+// DB schema
 const Customer = require('../models/customer')
 
+// Local functions
 const customerDetails = require('../public/javascripts/customerDetails')
+const setBirthdate = require('../public/javascripts/setBirthdate')
+const generateAccountNumber = require('../public/javascripts/generateAccountNumber')
 
 // GET
 // Find customer view
@@ -18,6 +23,7 @@ router.get('/', (req, res) => {
 router.get('/find', async (req, res) => {
     try {
         const customers = await Customer.find({ personal_number: req.query.customerCheck })
+        console.log(customers)
         if (customers.length) {
             customersInfo = customers.map(customer => customerDetails(customer))
             res.render('customers/index', {
@@ -27,13 +33,20 @@ router.get('/find', async (req, res) => {
         } else {
             res.render('customers/index', {
                 errorMessage: 'There is no customer with this personal number.',
+                dbError: false,
                 customers: customers,
                 searchOptions: req.query || ''
             })
         }
     } catch (err) {
         console.log(err)
-        res.redirect('/')
+        // res.redirect('/')
+        res.render('customers/index', {
+            errorMessage: 'Something went wrong while trying to find customers. Please try again.',
+            dbError: true,
+            customers: [],
+            searchOptions: req.query || ''
+        })
     }
 })
 
@@ -52,43 +65,16 @@ router.get('/new', (req, res) => {
 })
 
 // Create new customer
-router.post('/', async (req, res) => {
-    // Create random account number
-    const bankReg = '1234'
-    const typeOfAcct = req.body.acctType
-    let customerNo = Math.floor(Math.random() * 10000).toString()
-    let beforeControlNum = bankReg + typeOfAcct + customerNo
-
-    // Get control number for account with mod11 (Norwegian standard)
-    function mod11(account) {
-        const weights = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
-        sum = 0
-        for (let i = 0; i < account.length; i++) {
-            sum += Number(account[i]) * weights[i]
-        }
-        const ctrlNum = (11 - (sum % 11))
-        if (ctrlNum == 11) {
-            return '0'
-        } else if (ctrlNum == 10) {
-            customerNo = Math.floor(Math.random() * 10000).toString()
-            beforeControlNum = bankReg + typeOfAcct + customerNo
-            return mod11(beforeControlNum)
-        } else {
-            return ctrlNum
-        }
-    }
-    const accountNumber = beforeControlNum + mod11(beforeControlNum).toString()
+router.post('/new', async (req, res) => {
+    // Generate account number
+    const accountNumber = generateAccountNumber(req.body.acctType)
 
     // Create ID that correlates with account number (Norwegian standard)
     const id = Number(accountNumber.substr(4, 7))
 
     // Set birthdate
-    const pno = req.body.pno
-    const date = pno.substr(0, 6)
-    const day = date.substr(0, 2)
-    const month = date.substr(2, 2)
-    const year = date.substr(4, 2) > 21 ? `19${date.substr(4, 2)}` : `20${date.substr(4, 2)}` // Not accounting for 100-year olds
-    const birthdate = new Date(`${year}-${month}-${day}`)
+    const birthdate = setBirthdate(req.body.pno)
+
 
     // Create customer object
     const customer = new Customer({
@@ -103,7 +89,6 @@ router.post('/', async (req, res) => {
 
     try {
         const newCustomer = await customer.save()
-        // res.redirect(`customers`)
         res.render('customers/index', {
             customers: [],
             searchOptions: {
@@ -125,16 +110,53 @@ router.get('/update', (req, res) => {
         res.render('customers/update', {
             customer: new Customer({
                 personal_number: req.query.pno
-            })
+            }),
+            update: false
         })
     } else {
         res.render('customers/update', { customer: new Customer() })
     }
 })
 
+router.post('/update', async (req, res) => {
+    try {
+        // Find customer
+        const customer = await Customer.findOne({ personal_number: req.body.customerCheck })
+
+        if (customer) {
+            // If data is found
+            res.render('customers/update', {
+                customer: customer,
+                customers: [],
+                searchOptions: req.body.pno,
+                update: true
+            })
+        } else {
+            // If data is not found
+            res.render('customers/update', {
+                customer: new Customer(),
+                errorMessage: 'There is no customer with this personal number.',
+                customers: [],
+                searchOptions: req.body.pno || '',
+                update: false
+            })
+        }
+    } catch (err) {
+        // If something goes wrong when trying to find data
+        console.log(err)
+        res.render('customers/update', {
+            errorMessage: 'Something went wrong while trying to get customer from database. Please try again.',
+            customers: customers,
+            searchOptions: req.body.pno || '',
+            update: false
+        })
+    }
+})
+
 router.put('/:pno', async (req, res) => {
     try {
-        await Customer.updateOne({ personal_number: req.params.pno })
+        const update = await Customer.updateOne({ personal_number: req.params.pno })
+        console.log('Update here: ', update)
         res.render('customers/update', {
             searchOptions: '',
             customers: [],

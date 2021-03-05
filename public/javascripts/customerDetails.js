@@ -46,7 +46,6 @@ function customerDetails({ customer_id, personal_number, account_number, first_n
 function formatDate(iso) {
     iso = new Date(iso)
     return iso.toLocaleDateString('no-NO')
-
 }
 
 module.exports = customerDetails
