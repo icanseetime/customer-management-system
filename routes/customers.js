@@ -1,5 +1,4 @@
 const express = require('express')
-const { createCollection } = require('../models/customer') // TODO: check this
 const router = express.Router()
 
 // DB schema
@@ -104,10 +103,10 @@ router.post('/new', async (req, res) => {
                 customer_id: id,
                 personal_number: req.body.pno,
                 account_number: accountNumber,
-                first_name: req.body.fName,
-                last_name: req.body.lName,
+                first_name: req.body.fName.trim(),
+                last_name: req.body.lName.trim(),
                 date_of_birth: birthdate,
-                city: req.body.city
+                city: req.body.city.trim()
             })
 
             try {
@@ -188,8 +187,11 @@ router.put('/:pno', async (req, res) => {
         }
 
         // Names & city
+        req.body.fName = req.body.fName.trim()
         customer.first_name = customer.first_name == req.body.fName ? customer.first_name : req.body.fName
-        customer.last_name = customer.last_name == req.body.fName ? customer.last_name : req.body.lName
+        req.body.lName = req.body.lName.trim()
+        customer.last_name = customer.last_name == req.body.lName ? customer.last_name : req.body.lName
+        req.body.city = req.body.city.trim()
         customer.city = customer.city == req.body.city ? customer.city : req.body.city
 
         // Type of account (generates new account number, but does not update customer ID to match)
