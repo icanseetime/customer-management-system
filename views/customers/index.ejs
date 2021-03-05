@@ -2,14 +2,15 @@
 
 <!-- Search for existing customer -->
 <form action="/customers/find" method="GET">
-	<%- include('../partials/_search_field.ejs', { customer: '' }) %>
+	<%- include('../partials/_search_field.ejs', { customer: '' , minlength:
+	'3'}) %>
 	<div class="buttons-left">
 		<input class="button-primary" type="submit" value="Search" />
 	</div>
 </form>
 
 <!-- Send info to new customer-creation -->
-<% if (typeof errorMessage !== 'undefined' && !dbError) { %>
+<% if (typeof errorMessage !=='undefined' && !dbError) { %>
 <form action="/customers/new" method="GET">
 	<input
 		type="hidden"
@@ -46,7 +47,7 @@
 	</div>
 
 	<p class="customer-since">
-		Customer since <span><%= customer.sinceDate %> </span>
+		Customer since <span> <%= customer.sinceDate %> </span>
 	</p>
 </div>
 

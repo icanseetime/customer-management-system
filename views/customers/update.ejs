@@ -3,7 +3,7 @@
 <% if (!locals.update) { %>
 <form action="/customers/update" method="POST">
 	<%- include('../partials/_search_field.ejs', { customer: '', searchOptions:
-	{customerCheck: null} }) %>
+	{customerCheck: null}, minlength: '11' }) %>
 	<div class="buttons-left">
 		<input class="button-primary" type="submit" value="Find customer" />
 	</div>

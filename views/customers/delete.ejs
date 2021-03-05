@@ -1,7 +1,8 @@
 <h2>Delete existing customer</h2>
 
 <form action="/customers/delete" method="POST">
-	<%- include('../partials/_search_field.ejs', { customer: '' }) %>
+	<%- include('../partials/_search_field.ejs', { customer: '', minlength:
+	'11', title: 'Personal number should be 11 digits.' })%>
 	<div class="buttons-left">
 		<input class="button-primary" type="submit" value="Find customer" />
 	</div>

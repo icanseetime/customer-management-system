@@ -6,6 +6,6 @@
 	value="<%= customer.personal_number ? customer.personal_number : searchOptions.customerCheck %>"
 	autofocus
 	required
-	pattern="\d{11}"
-	title="Personal number should be 11 digits."
+	pattern="\d{<%= locals.minlength %>}"
+	title="<%= locals.minlength == '11' ? 'You need to input all 11 digits to find a customer.' : `You need to insert ${locals.minlength} or more digits to search for customers.` %>"
 />
