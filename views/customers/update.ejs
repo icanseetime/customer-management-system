@@ -1,9 +1,25 @@
 <h2>Update customer details</h2>
+<!-- Search for existing customer -->
+<% if (!locals.update) { %>
+<form action="/customers/update" method="POST">
+	<%- include('../partials/_search_field.ejs', { customer: '', searchOptions:
+	{customerCheck: null} }) %>
+	<div class="buttons-left">
+		<input class="button-primary" type="submit" value="Find customer" />
+	</div>
+</form>
+<% } %>
 
-<form action="/customers/<%= customer.personal_number %>?_method=PUT">
+<!-- Update customer if found -->
+<% if (locals.update) { %>
+<form
+	action="/customers/<%= customer.personal_number %>?_method=PUT"
+	method="POST"
+>
 	<%- include('../partials/_form_fields') %>
 	<div class="buttons-left">
 		<a class="button" href="/">Cancel</a>
 		<input class="button-primary" type="submit" value="Update" />
 	</div>
 </form>
+<% } %>

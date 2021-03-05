@@ -9,7 +9,7 @@
 </form>
 
 <!-- Send info to new customer-creation -->
-<% if (typeof errorMessage !== 'undefined') { %>
+<% if (typeof errorMessage !== 'undefined' && !dbError) { %>
 <form action="/customers/new" method="GET">
 	<input
 		type="hidden"

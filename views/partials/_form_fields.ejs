@@ -32,9 +32,9 @@
 
 <label for="acctType">Account type</label>
 <select name="acctType" id="acctType" required>
-	<option disabled selected hidden>Select account type</option>
-	<option value="60">Current account</option>
-	<option value="50">Deposit account</option>
-	<option value="40">Savings account</option>
-	<option value="30">Investment account</option>
+	<option disabled <%= customer.account_number ? '' : 'selected' %> hidden>Select account type</option>
+	<option value="60" <%= customer.account_number ? (customer.account_number.substr(4, 2) == '60' ? 'selected' : '') : '' %> >Current account</option>
+	<option value="50" <%= customer.account_number ? (customer.account_number.substr(4, 2) == '50' ? 'selected' : '') : '' %>>Deposit account</option>
+	<option value="40" <%= customer.account_number ? (customer.account_number.substr(4, 2) == '40' ? 'selected' : '') : '' %>>Savings account</option>
+	<option value="30" <%= customer.account_number ? (customer.account_number.substr(4, 2) == '30' ? 'selected' : '') : '' %>>Investment account</option>
 </select>
