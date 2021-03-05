@@ -66,41 +66,63 @@ router.get('/new', (req, res) => {
 
 // Create new customer
 router.post('/new', async (req, res) => {
-    // Generate account number
-    const accountNumber = generateAccountNumber(req.body.acctType)
-
-    // Create ID that correlates with account number (Norwegian standard)
-    const id = Number(accountNumber.substr(4, 7))
-
-    // Set birthdate
-    const birthdate = setBirthdate(req.body.pno)
-
-
-    // Create customer object
-    const customer = new Customer({
-        customer_id: id,
-        personal_number: req.body.pno,
-        account_number: accountNumber,
-        first_name: req.body.fName,
-        last_name: req.body.lName,
-        date_of_birth: birthdate,
-        city: req.body.city
-    })
-
-    try {
-        const newCustomer = await customer.save()
-        res.render('customers/index', {
-            customers: [],
-            searchOptions: {
-                customerCheck: req.body.pno
-            }
-        })
-    } catch (err) {
-        console.log(err)
+    // Check if customer already exists
+    const pnoCheck = await Customer.find({ personal_number: req.body.pno })
+    if (pnoCheck.length) {
         res.render('customers/new', {
-            customer: customer,
-            errorMessage: 'Something went wrong when trying to create the new customer. Please check the form and try again.'
+            customer: '',
+            errorMessage: `There is already a customer with personal number ${req.body.pno} in the database. Please check the personal number and try again.`
         })
+    } else {
+        // Generate account number
+        let accountNumber, accNoCheck
+        do {
+            accountNumber = generateAccountNumber(req.body.acctType)
+            // Check if account number already exists in database
+            accNoCheck = await Customer.find({ account_number: customer.account_number })
+        } while (accNoCheck.length)
+
+        // Create ID that correlates with account number (Norwegian standard)
+        const id = Number(accountNumber.substr(4, 7))
+        const idCheck = await Customer.find({ customer_id: id })
+
+        // Check to make sure customer ID doesn't exist in the database
+        if (idCheck.length) {
+            res.render('customers/new', {
+                customer: '',
+                errorMessage: 'Something went wrong when trying to create the new customer.Please try submitting the form again.'
+            })
+        } else {
+            // Set birthdate
+            const birthdate = setBirthdate(req.body.pno)
+
+            // Create customer object
+            const customer = new Customer({
+                customer_id: id,
+                personal_number: req.body.pno,
+                account_number: accountNumber,
+                first_name: req.body.fName,
+                last_name: req.body.lName,
+                date_of_birth: birthdate,
+                city: req.body.city
+            })
+
+            try {
+                await customer.save()
+                res.render('customers/index', {
+                    customers: [],
+                    searchOptions: {
+                        customerCheck: req.body.pno
+                    }
+                })
+            } catch (err) {
+                console.log(err)
+                res.render('customers/new', {
+                    customer: customer,
+                    errorMessage: 'Something went wrong when trying to create the new customer. Please check the form and try again.'
+                })
+            }
+        }
     }
 })
 
@@ -153,15 +175,10 @@ router.post('/update', async (req, res) => {
     }
 })
 
-// TODO: check for no updates or remove code
 router.put('/:pno', async (req, res) => {
     try {
         // Find customer to update
         const customer = await Customer.findOne({ personal_number: req.params.pno })
-        // let customerCopy = Object.create(customer)
-
-        // console.log(customer == customerCopy)
-        // console.log(Object.is(customer, customerCopy))
 
         // Personal number & date of birth
         if (customer.personal_number !== req.body.pno) {
@@ -177,22 +194,16 @@ router.put('/:pno', async (req, res) => {
         customer.last_name = customer.last_name == req.body.fName ? customer.last_name : req.body.lName
         customer.city = customer.city == req.body.city ? customer.city : req.body.city
 
-        // Type of account (generates new account number, but does not update customer ID)
+        // Type of account (generates new account number, but does not update customer ID to match)
         if (customer.account_number.substring(4, 2) !== req.body.acctType) {
-            customer.account_number = generateAccountNumber(req.body.acctType)
+            let accNoCheck
+            do {
+                customer.account_number = generateAccountNumber(req.body.acctType)
+                // Check if account number already exists in database
+                accNoCheck = await Customer.find({ account_number: customer.account_number })
+            } while (accNoCheck.length)
         }
 
-        // console.log(customer)
-        // console.log(customerCopy)
-
-        // if (Object.is(customer, customerCopy)) {
-        //     // If no changes were made
-        //     res.render('customers/update', {
-        //         searchOptions: '',
-        //         customers: [],
-        //         successMessage: `No changes were made to customer with personal number ${req.params.pno}.`
-        //     })
-        // } else {
         // If successfully updated
         await customer.save()
         res.render('customers/update', {
@@ -200,7 +211,6 @@ router.put('/:pno', async (req, res) => {
             customers: [],
             successMessage: `Successfully updated customer with personal number ${req.params.pno}.`
         })
-        // }
     } catch {
         res.render('customers/update', {
             customer: new Customer({
