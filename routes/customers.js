@@ -153,15 +153,54 @@ router.post('/update', async (req, res) => {
     }
 })
 
+// TODO: check for no updates or remove code
 router.put('/:pno', async (req, res) => {
     try {
-        const update = await Customer.updateOne({ personal_number: req.params.pno })
-        console.log('Update here: ', update)
+        // Find customer to update
+        const customer = await Customer.findOne({ personal_number: req.params.pno })
+        // let customerCopy = Object.create(customer)
+
+        // console.log(customer == customerCopy)
+        // console.log(Object.is(customer, customerCopy))
+
+        // Personal number & date of birth
+        if (customer.personal_number !== req.body.pno) {
+            console.log('This works!')
+            customer.personal_number = req.body.pno
+            console.log(customer.personal_number)
+            customer.date_of_birth = setBirthdate(customer.personal_number)
+            console.log(customer.date_of_birth)
+        }
+
+        // Names & city
+        customer.first_name = customer.first_name == req.body.fName ? customer.first_name : req.body.fName
+        customer.last_name = customer.last_name == req.body.fName ? customer.last_name : req.body.lName
+        customer.city = customer.city == req.body.city ? customer.city : req.body.city
+
+        // Type of account (generates new account number, but does not update customer ID)
+        if (customer.account_number.substring(4, 2) !== req.body.acctType) {
+            customer.account_number = generateAccountNumber(req.body.acctType)
+        }
+
+        // console.log(customer)
+        // console.log(customerCopy)
+
+        // if (Object.is(customer, customerCopy)) {
+        //     // If no changes were made
+        //     res.render('customers/update', {
+        //         searchOptions: '',
+        //         customers: [],
+        //         successMessage: `No changes were made to customer with personal number ${req.params.pno}.`
+        //     })
+        // } else {
+        // If successfully updated
+        await customer.save()
         res.render('customers/update', {
             searchOptions: '',
             customers: [],
             successMessage: `Successfully updated customer with personal number ${req.params.pno}.`
         })
+        // }
     } catch {
         res.render('customers/update', {
             customer: new Customer({
