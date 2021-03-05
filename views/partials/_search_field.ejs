@@ -7,5 +7,5 @@
 	autofocus
 	required
 	pattern="\d{<%= locals.minlength %>}"
-	title="<%= locals.minlength == '11' ? 'You need to input all 11 digits to find a customer.' : `You need to insert ${locals.minlength} or more digits to search for customers.` %>"
+	title="<%= locals.minlength == '11' ? 'You need to input all 11 digits to find a customer.' : `You need to insert ${locals.minlength.split(',')[0]} or more digits to search for customers.` %>"
 />
