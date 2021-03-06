@@ -282,6 +282,11 @@ p.customer-since {
 
 @media only screen and (max-width: 480px) {
 
+    /* General */
+    h2 {
+        text-align: center;
+    }
+
     /* Forms */
     .button,
     button,
