@@ -12,7 +12,7 @@ const generateAccountNumber = require('../public/javascripts/generateAccountNumb
 // GET
 // Find customer view
 router.get('/', (req, res) => {
-    res.render('customers/index', {
+    res.status(200).render('customers/index', {
         searchOptions: '',
         customers: []
     })
@@ -20,28 +20,35 @@ router.get('/', (req, res) => {
 
 // Check if customer exists in database
 router.get('/find', async (req, res) => {
-    try {
-        const customers = await Customer.find({ personal_number: new RegExp(req.query.customerCheck) })
-        if (customers.length) {
-            customersInfo = customers.map(customer => customerDetails(customer))
-            res.render('customers/index', {
-                customers: customersInfo,
-                searchOptions: req.query
-            })
-        } else {
-            res.render('customers/index', {
-                errorMessage: 'There is no customer with this personal number.',
-                dbError: false,
-                customers: customers,
+    if (req.query.customerCheck) {
+        try {
+            const customers = await Customer.find({ personal_number: new RegExp(req.query.customerCheck) })
+            if (customers.length) {
+                customersInfo = customers.map(customer => customerDetails(customer))
+                res.status(200).render('customers/index', {
+                    customers: customersInfo,
+                    searchOptions: req.query
+                })
+            } else {
+                res.status(404).render('customers/index', {
+                    errorMessage: 'There is no customer with this personal number.',
+                    dbError: false,
+                    customers: customers,
+                    searchOptions: req.query || ''
+                })
+            }
+        } catch {
+            res.status(500).render('customers/index', {
+                errorMessage: 'Something went wrong while trying to find customers. Please try again.',
+                dbError: true,
+                customers: [],
                 searchOptions: req.query || ''
             })
         }
-    } catch {
-        res.render('customers/index', {
-            errorMessage: 'Something went wrong while trying to find customers. Please try again.',
-            dbError: true,
-            customers: [],
-            searchOptions: req.query || ''
+    } else {
+        res.status(403).render('customers/index', {
+            searchOptions: req.query,
+            customers: []
         })
     }
 })
@@ -50,13 +57,13 @@ router.get('/find', async (req, res) => {
 // New customer
 router.get('/new', (req, res) => {
     if (req.query.pno) {
-        res.render('customers/new', {
+        res.status(200).render('customers/new', {
             customer: new Customer({
                 personal_number: req.query.pno
             })
         })
     } else {
-        res.render('customers/new', { customer: new Customer() })
+        res.status(200).render('customers/new', { customer: new Customer() })
     }
 })
 
@@ -65,7 +72,7 @@ router.post('/new', async (req, res) => {
     // Check if customer already exists
     const pnoCheck = await Customer.find({ personal_number: req.body.pno })
     if (pnoCheck.length) {
-        res.render('customers/new', {
+        res.status(409).render('customers/new', {
             customer: new Customer({
                 personal_number: req.body.pno,
                 first_name: req.body.fName,
@@ -90,7 +97,7 @@ router.post('/new', async (req, res) => {
 
         // Check to make sure customer ID doesn't exist in the database
         if (idCheck.length) {
-            res.render('customers/new', {
+            res.status(409).render('customers/new', {
                 customer: '',
                 errorMessage: 'Something went wrong when trying to create the new customer.Please try submitting the form again.'
             })
@@ -111,14 +118,14 @@ router.post('/new', async (req, res) => {
 
             try {
                 await customer.save()
-                res.render('customers/index', {
+                res.status(200).render('customers/index', {
                     customers: [],
                     searchOptions: {
                         customerCheck: req.body.pno
                     }
                 })
             } catch {
-                res.render('customers/new', {
+                res.status(500).render('customers/new', {
                     customer: customer,
                     errorMessage: 'Something went wrong when trying to create the new customer. Please check the form and try again.'
                 })
@@ -130,14 +137,14 @@ router.post('/new', async (req, res) => {
 // UPDATE
 router.get('/update', (req, res) => {
     if (req.query.pno) {
-        res.render('customers/update', {
+        res.status(200).render('customers/update', {
             customer: new Customer({
                 personal_number: req.query.pno
             }),
             update: false
         })
     } else {
-        res.render('customers/update', { customer: new Customer() })
+        res.status(200).render('customers/update', { customer: new Customer() })
     }
 })
 
@@ -148,7 +155,7 @@ router.post('/update', async (req, res) => {
 
         if (customer) {
             // If data is found
-            res.render('customers/update', {
+            res.status(200).render('customers/update', {
                 customer: customer,
                 customers: [],
                 searchOptions: req.body.pno,
@@ -156,7 +163,7 @@ router.post('/update', async (req, res) => {
             })
         } else {
             // If data is not found
-            res.render('customers/update', {
+            res.status(404).render('customers/update', {
                 customer: new Customer(),
                 errorMessage: 'There is no customer with this personal number.',
                 customers: [],
@@ -166,7 +173,7 @@ router.post('/update', async (req, res) => {
         }
     } catch {
         // If something goes wrong when trying to find data
-        res.render('customers/update', {
+        res.status(500).render('customers/update', {
             errorMessage: 'Something went wrong while trying to get customer from database. Please try again.',
             customers: customers,
             searchOptions: req.body.pno || '',
@@ -206,13 +213,13 @@ router.put('/:pno', async (req, res) => {
 
         // If successfully updated
         await customer.save()
-        res.render('customers/update', {
+        res.status(201).render('customers/update', {
             searchOptions: '',
             customers: [],
             successMessage: `Successfully updated customer with personal number ${req.params.pno}.`
         })
     } catch {
-        res.render('customers/update', {
+        res.status(500).render('customers/update', {
             customer: new Customer({
                 personal_number: req.params.pno
             }),
@@ -227,7 +234,7 @@ router.put('/:pno', async (req, res) => {
 // Delete customer-page
 router.get('/delete', (req, res) => {
     if (req.query.pno) {
-        res.render('customers/delete', {
+        res.status(200).render('customers/delete', {
             customer: new Customer({
                 personal_number: req.query.pno
             }),
@@ -235,7 +242,7 @@ router.get('/delete', (req, res) => {
             customers: []
         })
     } else {
-        res.render('customers/delete', {
+        res.status(200).render('customers/delete', {
             customer: new Customer(),
             searchOptions: '',
             customers: []
@@ -249,21 +256,24 @@ router.post('/delete', async (req, res) => {
         const customers = await Customer.find({ personal_number: req.body.customerCheck })
         if (customers.length) {
             customersInfo = customers.map(customer => customerDetails(customer))
-            res.render('customers/delete', {
+            res.status(200).render('customers/delete', {
                 customers: customersInfo,
                 pno: req.body.customerCheck,
-                searchOptions: req.query
+                searchOptions: req.body.customerCheck
             })
         } else {
-            res.render('customers/delete', {
+            res.status(404).render('customers/delete', {
                 errorMessage: 'There is no customer with this personal number, please try again.',
-                customer: new Customer(),
-                customers: customers,
-                searchOptions: req.query || ''
+                customers: [],
+                searchOptions: req.body.customerCheck || ''
             })
         }
     } catch {
-        res.redirect('/customers/delete')
+        res.status(500).render('customers/delete', {
+            errorMessage: 'Something went wrong when trying to find the customer. Please try again.',
+            customers: [],
+            searchOptions: req.body.customerCheck || ''
+        })
     }
 })
 
@@ -271,13 +281,13 @@ router.post('/delete', async (req, res) => {
 router.delete('/:pno', async (req, res) => {
     try {
         await Customer.deleteOne({ personal_number: req.params.pno })
-        res.render('customers/delete', {
+        res.status(200).render('customers/delete', {
             searchOptions: '',
             customers: [],
             successMessage: `Successfully deleted customer with personal number ${req.params.pno}.`
         })
     } catch {
-        res.render('customers/delete', {
+        res.status(500).render('customers/delete', {
             customer: new Customer({
                 personal_number: req.params.pno
             }),
