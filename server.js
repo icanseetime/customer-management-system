@@ -13,7 +13,6 @@ const methodOverride = require('method-override')
 const indexRouter = require('./routes/index')
 const customerRouter = require('./routes/customers')
 
-// Layouts || ejs
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/views')
 app.set('layout', 'layouts/layout')

@@ -1,8 +1,8 @@
 /.env
+/.envlocal
 /node_modules
 /yarn-error.log
 /yarn.lock
 /notes.md
 /test.html
-test.js
-README.md
+/test.js
