@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const calcLatency = require('../scripts/latency')
 
 const customerSchema = new mongoose.Schema({
     customer_id: {
@@ -39,6 +40,37 @@ const customerSchema = new mongoose.Schema({
         required: true,
         default: Date.now
     }
+})
+
+// Custom middleware for calculating latency
+// Customer.find()
+customerSchema.pre('find', () => {
+    this.start = Date.now()
+})
+
+customerSchema.post('find', () => {
+    const latency = (Date.now() - this.start)
+    calcLatency(latency, 'find')
+})
+
+// Customer.save()
+customerSchema.pre('save', () => {
+    this.start = Date.now()
+})
+
+customerSchema.post('save', () => {
+    const latency = (Date.now() - this.start)
+    calcLatency(latency, 'save')
+})
+
+// Customer.deleteOne()
+customerSchema.pre('deleteOne', () => {
+    this.start = Date.now()
+})
+
+customerSchema.post('deleteOne', () => {
+    const latency = (Date.now() - this.start)
+    calcLatency(latency, 'deleteOne')
 })
 
 module.exports = mongoose.model('Customer', customerSchema)
