@@ -7,6 +7,8 @@ const app = express()
 const expressLayouts = require('express-ejs-layouts')
 const mongoose = require('mongoose')
 const methodOverride = require('method-override')
+const morgan = require('morgan')
+const fs = require('fs')
 
 // Routers
 const indexRouter = require('./routes/index')
@@ -19,6 +21,21 @@ app.use(expressLayouts)
 app.use(methodOverride('_method'))
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: false }))
+
+// Measure end-to-end latency
+const format = (tokens, req, res) => {
+    if (tokens.url(req, res).startsWith('/customers')) {
+        return [
+            'End-to-end latency: ',
+            tokens['response-time'](req, res), 'ms',
+            // '-',
+            tokens.status(req, res),
+            tokens.method(req, res),
+            tokens.url(req, res)
+        ].join(' ')
+    }
+}
+app.use(morgan(format, { stream: fs.createWriteStream('./logs/endtoend.log', { flags: 'a' }) }))
 
 // Database connection
 mongoose.connect(process.env.DATABASE_URL, {
