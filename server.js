@@ -6,8 +6,9 @@ const express = require('express')
 const app = express()
 const expressLayouts = require('express-ejs-layouts')
 const mongoose = require('mongoose')
-const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
+const morgan = require('morgan')
+const fs = require('fs')
 
 // Routers
 const indexRouter = require('./routes/index')
@@ -19,17 +20,43 @@ app.set('layout', 'layouts/layout')
 app.use(expressLayouts)
 app.use(methodOverride('_method'))
 app.use(express.static('public'))
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }))
+app.use(express.urlencoded({ extended: false }))
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+// Measure end-to-end latency
+const format = (tokens, req, res) => {
+    if (tokens.url(req, res).startsWith('/customers')) {
+        return [
+            'End-to-end latency: ',
+            tokens['response-time'](req, res), 'ms',
+            // '-',
+            tokens.status(req, res),
+            tokens.method(req, res),
+            tokens.url(req, res)
+        ].join(' ')
+    }
+}
+app.use(morgan(format, { stream: fs.createWriteStream('./logs/endtoend.log', { flags: 'a' }) }))
+
+// Database connection
+mongoose.connect(process.env.DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+})
 const db = mongoose.connection
-db.on('error', error => console.error(error))
-db.on('open', () => console.error('Connected to Mongoose'))
+db.on('error', error => console.error('❌ Mongoose DB connection\n', error))
+db.on('open', () => console.log('✅ Mongoose DB connection'))
 
 // Routes
 app.use('/', indexRouter)
 app.use('/customers', customerRouter)
 
-// Server
-app.listen(process.env.PORT || 3000)
+// Error handling
+app.use((err, req, res, next) => {
+    res.status(err.status || 500)
+    res.json({ error: `${err}` })
+})
 
+// Server
+app.listen(process.env.PORT || 3000, () => console.log(`✅ Server running [👂:${process.env.PORT}]`))
