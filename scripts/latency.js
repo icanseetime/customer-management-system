@@ -14,7 +14,7 @@ const calcLatency = (cloudLatency, queryType) => {
 
             // Log formatted latency-string to console
             let newLog = `\n${header}\n - End-to-end latency: ${e2eLatency} ms\n - Cloud processing latency: ${cloudLatency} ms\n - Communication latency: ${(e2eLatency - cloudLatency)} ms`
-            console.log('⏳ Latency', newLog, '\n\n')
+            console.log('⏳ Latency', newLog, '\n')
         }
     })
 }
