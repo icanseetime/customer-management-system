@@ -1,8 +1,6 @@
 # ABC Bank Customer Management System
 
-[Heroku live version here!](https://abcbank-customer-management.herokuapp.com/)
-
-_- Isak R. Gjeitsund_
+<!-- [Heroku live version here!](https://abcbank-customer-management.herokuapp.com/) -->
 
 ---
 
