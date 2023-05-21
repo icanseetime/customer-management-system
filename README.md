@@ -2,7 +2,7 @@
 
 [Heroku live version here!](https://abcbank-customer-management.herokuapp.com/)
 
-_- Ida M. R. Gjeitsund_
+_- Isak R. Gjeitsund_
 
 ---
 
